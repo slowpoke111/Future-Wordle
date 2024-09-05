@@ -4,3 +4,4 @@ Written in Python and JS.
 
 Todo:
 - [x] Add GUI
+- [ ] Fix error on mobile web. 
