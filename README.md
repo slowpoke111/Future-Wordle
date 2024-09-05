@@ -2,4 +2,4 @@
 This allows you to view future (and past) Wordles.
 
 Todo:
-[] Add UI
+[ ] Add UI
