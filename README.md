@@ -1,1 +1,1 @@
-# FutureWorlde
+# Future Wordle Viewer
