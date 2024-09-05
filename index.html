@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Solution Finder</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            color: #00FF00; /* Green text color */
+            background: linear-gradient(135deg, #000000, #003300); /* Black to dark green gradient */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+        label, input, button {
+            background-color: #003300;
+            color: #00FF00;
+            border: 2px solid #00FF00;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button {
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #00FF00;
+            color: #003300;
+            border-color: #003300;
+        }
+        #solution {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5); /* Green glow effect */
+        }
+    </style>
+</head>
+<body>
+    <h1>Wordle Solution Finder</h1>
+    <label for="days">Enter number of days from today:</label>
+    <input type="number" id="days" value="1" min="-30" max="30">
+    <button onclick="fetchSolution()">Get Wordle Solution</button>
+    <div id="solution"></div>
+
+    <script>
+        async function fetchWordleSolution(future = 1) {
+            const today = new Date();
+            const targetDate = new Date(today);
+            targetDate.setUTCDate(today.getUTCDate() + future);
+
+            const year = targetDate.getUTCFullYear();
+            const month = String(targetDate.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(targetDate.getUTCDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
+
+            const url = `https://www.nytimes.com/svc/wordle/v2/${dateStr}.json`;
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`; // Using a  CORS proxy
+
+            console.log(`Fetching data from URL: ${proxyUrl}`);
+
+            try {
+                const response = await fetch(proxyUrl);
+                if (!response.ok) {
+                    const errorText = await response.text(); 
+                    throw new Error(`HTTP error! Status: ${response.status}. Message: ${errorText}`);
+                }
+                const data = await response.json();
+                console.log('Fetched data:', data); 
+                return JSON.parse(data.contents).solution; // Parsing data from the proxy
+            } catch (error) {
+                console.error('Error fetching the Wordle solution:', error);
+                return null;
+            }
+        }
+
+        async function fetchSolution() {
+            const days = document.getElementById('days').value;
+            console.log(`Days input: ${days}`); 
+            const word = await fetchWordleSolution(parseInt(days));
+            const solutionElement = document.getElementById('solution');
+            if (word) {
+                solutionElement.innerText = `Wordle Solution: ${word}`;
+            } else {
+                solutionElement.innerText = 'Error fetching the Wordle solution.';
+            }
+        }
+    </script>
+</body>
+</html>
