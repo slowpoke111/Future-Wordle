@@ -7,3 +7,5 @@ Written in Python and JS.
 Todo:
 - [x] Add GUI
 - [ ] Fix error on mobile web. 
+
+[Future Connections](https://slowpoke111.github.io/Future-Connections/)
